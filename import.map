@@ -1,0 +1,20 @@
+-CUSTMER|User Table|J:\Membership Lists\APodA (VIC)\APODAV for Upload FEB2012.txt|~|15|
+|CUSTID|User identifier|1|0|1|
+|FIRSTNAME|First name:|0|0|2|
+|LASTNAME|LASTNAME|0|0|3|
+|CUSTNM|User Name|0|0|4|
+|ADDRESS1|ADDRESS1|0|0|5|
+|ADDRESS2|ADDRESS2|0|0|6|
+|POSTCODE|Postcode Field|0|0|7|
+|CITY|CITY|0|0|8|
+|STATE|STATE|0|0|9|
+|WORKPHONE|WORKPHONE|0|0|10|
+|WORKFAX|WORKFAX|0|0|11|
+|PHONE|Telephone Number|0|0|12|
+|MOBILE|MOBILE|0|0|13|
+|EMAIL|External Email Address|0|0|14|
+|ORGANISATION|ORGANISATION|0|0|15|
+|TSDATE|Timestamp date|0|1|0|
+|TSTIME|Timestamp time|0|1|0|
+|TSOPER|Timestamp Support Analyst identifier|0|1|0|
+|TSGRP|Timestamp group identifier|0|1|0|
