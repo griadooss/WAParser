@@ -14,14 +14,14 @@ class Column:
        
        
        
-WAMap = { 'cust_id': [int, 1], 
+WAMAP = { 'cust_id': [int, 1], 
          'first_name': [str, 2] }   
 
-col1 = Column( WAMap['cust_id'] )
-col2 = Column( WAMap['first_name'] )
+maskCol01 = Column( WAMAP['cust_id'] )
+maskCol02 = Column( WAMAP['first_name'] )
 
-print col1
-print col2
+print maskCol01
+print maskCol02
 
 # I am following along video 16_13_02 at time 08:00
 # but that video uses SimpleGUI
