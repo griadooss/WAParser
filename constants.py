@@ -26,5 +26,5 @@ AREACODE={'NSW':'02','ACT':'02','VIC':'03','TAS':'03','QLD':'07','WA':'08','SA':
 #Max length of each column
 COLLEN={1:20,2:30,3:30,4:30,5:40,6:40,7:20,8:40,9:40,10:20,11:20,12:20,13:20,14:'',15:40,16:1}
 ###################################
-#List of most URL domain extensions
-URLEXT=['.com', '.co', '.net', '.org', '.biz', '.info', '.us', '.mobi', '.tv', '.ws', '.cc', '.name', '.de', '.jp', '.be', '.at', '.asia', '.co.uk', '.me.uk', '.org.uk', 'co.nz', '.net.nz', '.org.nz', '.cn', '.com.cn', '.org.cn', '.net.cn', '.tw', '.com.tw', '.org.tw', '.idv.tw', '.jobs', '.fm', '.ms', '.me', '.nu', '.tc', '.tk', '.vg', '.com.au', '.org.au', '.net.au', '.co.nz', '.au.com', '.id.au', '.net.nz', '.asn.au', '.asia', '.org.nz', '.geek.nz', '.gen.nz', '.gov.au', '.edu.au', 'csiro.au', '.edu', '.gov', '.ac.nz', '.ca', 'alice.it', 'free.fr', 'hotmail.it', '.ac.uk', 'yahoo.es', 'live.hk', '.ch']
+#Tuple of most URL domain extensions
+URLEXT=('.com', '.co', '.net', '.org', '.biz', '.info', '.us', '.mobi', '.tv', '.ws', '.cc', '.name', '.de', '.jp', '.be', '.at', '.asia', '.co.uk', '.me.uk', '.org.uk', 'co.nz', '.net.nz', '.org.nz', '.cn', '.com.cn', '.org.cn', '.net.cn', '.tw', '.com.tw', '.org.tw', '.idv.tw', '.jobs', '.fm', '.ms', '.me', '.nu', '.tc', '.tk', '.vg', '.com.au', '.org.au', '.net.au', '.co.nz', '.au.com', '.id.au', '.net.nz', '.asn.au', '.asia', '.org.nz', '.geek.nz', '.gen.nz', '.gov.au', '.edu.au', 'csiro.au', '.edu', '.gov', '.ac.nz', '.ca', 'alice.it', 'free.fr', 'hotmail.it', '.ac.uk', 'yahoo.es', 'live.hk', '.ch')
