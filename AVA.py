@@ -2,6 +2,7 @@
 ################ Spreadsheet Parser ########################
 ############# by griadooss@qdoss.com.au ####################
 ################ Version 0.00 ##############################
+from sandbox import fun
 
 '''This program has two purposes
 1. to take an input spread sheet and have its column types 
@@ -15,10 +16,46 @@ inconsistent with the user's requirements
 ############ FUNCTION DECLARATION AREA #####################
 
 #USER DEFINED FUNCTIONS
+# Exercise: make a regular expression that will match an email
 
+class Cleanse():
+    def __init__(self, s, f):
+        self.s = s #string to process
+        self.f = f #function to use
+    
+    def bstrip(self):
+        return(self.s.lstrip().rstrip())
+    
+    def do_parse(self):
+        self.s = self.bstrip()
+        self.l =[]
+        for a in self.s:
+            # import foo
+            # methodToCall = getattr(foo, 'bar')
+            # result = methodToCall()
+            if getattr(a, self.f)():
+                self.l.append(a)
+        return ''.join(self.l)
+                
+            
+def test_email(e):
+    #email_pattern = r"\"?([-a-zA-Z0-9_.`?{}\-]+@\w+\.\w+)\"?"   ===> removed the \. seq before \w+)\"?" at the end 
+    #                                                                to allow the hyphen ("-") to be accepted.
+    #                                                                But no idea why this worked .. discovered it by chance,
+    email_pattern = r"\"?([-a-zA-Z0-9_.`?{}\-]+@\w+\w+)\"?"
+    testfor = re.compile(email_pattern)
+    if not re.match(testfor, e):
+        return False
+    else:
+        return True
+    
 def ForceFieldLength(s, n):
-    if len(s) > n:
-        s = s[0:n]
+    s=s.lstrip().rstrip()
+    if len(s) > 0:
+        if len(s) > n:
+            s = s[0:n]
+    else:
+        return ''
     return s
     
 def Logit(s):
@@ -26,97 +63,46 @@ def Logit(s):
         wrtr = csv.writer(logf)
         wrtr.writerow([s])
         
-def CheckNumeric(s,b):
+def CheckNumeric(s, fn='default'):
 #Check field is only full of numeric characters 0-9  
-    b = 'True'
-    if not s.isdigit():
-        Logit("CheckNumeric: LineNo - " + str(ln+1) + " | Mem ID - " + curline[0] + " |" + COLDESC[(i+1)] +" - " + s + " :: Not a numeric!")  
-        b = 'False'
-    return b
+    so = Cleanse(s, 'isdigit')
+    s = so.do_parse()
+    if len(s) > 0:
+        if not s.isdigit():
+            Logit(fn + " : LineNo - " + str(ln+1) + " | Mem ID - " + curline[0] + " |" + COLDESC[(i+1)] +" - " + s + " :: Not a numeric! - replaced with null")  
+    return s
     
 def CheckAlpha(s):
+    so = Cleanse(s, 'isalpha')
+    s = so.do_parse()
     if len(s) > 0:
-        s=FixString(s)
         if not s.replace(" ","").isalpha() and len(s) > 0:
             Logit("CheckAlpha: LineNo - " + str(ln+1) + " | Mem ID - " + curline[0] + " |" + COLDESC[(i+1)] +" - " + s + " :: Not a alphabetic letter.")  
-    return s          
+    return s
+             
 
 def CheckAlphaNum(s):
+    so = Cleanse(s, 'isalnum')
+    s = so.do_parse()
     if len(s) > 0:
-        #Set dubugging point
-        #pdb.set_trace()
-        s=FixString(s)
         if not s.replace(" ","").isalnum() and len(s) > 0:           
             Logit("CheckAlphaNum: LineNo - " + str(ln+1) + " | Mem ID - " + curline[0] + " |" + COLDESC[(i+1)] +" - " + s + " contains other than alpha numerics!!" )  
     return s    
 
       
 def CheckEmail(s):
-    #Check email string has at '@' and is a valid URL extension  
-    ext = True
-    if s=='':
-        return
-    #pdb.set_trace()
-    for item in URLEXT:
-        if s.find(item) > 0 :
-            #pdb.set_trace()
-            ext = True
-            break
-        ext = False
-        
-    if s.find('@') == -1:
-        #pdb.set_trace()
-        Logit("CheckEmail:  LineNo - " + str(ln+1) + " | Mem ID - " + curline[0] + " |" + COLDESC[(i+1)] +" - " + s + " no chiocciola!!")  
-    
-    if not ext:
-        Logit("CheckEmail:  LineNo - " + str(ln+1) + " | Mem ID - " + curline[0] + " |" + COLDESC[(i+1)] +" - " + s + " not a known email ext.")  
-    
-    return
- 
-def FixString(s):
-    #Strip anything that is not a number or a letter - FIND A BETTER WAY > DYNAMICALLY
-    s=s.replace('/', '')
-    s=s.replace('(', '')
-    s=s.replace(')', '')
-    s=s.replace('-', '')
-    s=s.replace('+', '')
-    s=s.replace('.', '')
-    s=s.replace(',', '')
-    s=s.replace('"', '')
-    s=s.replace("'", "")
-    s=s.replace('^', '')
-    s=s.replace(':', '')
-    s=s.replace('@', '')
-    s=s.replace('[', '')
-    s=s.replace(']', '')
-    s=s.replace('_', ' ')
-    s=s.replace('<', '')
-    s=s.replace('>', '')
-    s=s.replace('#', '')
-    s=s.replace('\\', '')
-    s=s.replace('!', '')
-    s=s.replace('`', '') 
-    s=s.replace('é', 'e')
-    s=s.replace('ë', 'e')
-    s=s.replace('é', 'e')
-    s=s.replace('ô', 'o')
-    s=s.replace('&', 'and')
-    s=s.strip()
-    
+    #Check email string has at '@' 
+    s=s.lstrip().rstrip()
+    if len(s) > 0:
+        if not test_email(s):
+            Logit("CheckEmail - test_email:  LineNo - " + str(ln+1) + " | Mem ID - " + curline[0] + " |" + COLDESC[(i+1)] +" - " + s + " failed regex test")  
+    else:
+        return ''
     return s
 
 
-
 def FixPhoneNumber(s):
-    #Strip anything that is not a number - FIND A BETTER WAY > DYNAMICALLY
-    s=s.replace(' ', '')
-    s=s.replace('(', '')
-    s=s.replace(')', '')
-    s=s.replace('+', '')
-    s=s.replace('.', '')
-    s=s.replace('-', '')
-    s=s.replace('O', '0')
-    
+    s=CheckNumeric(s, fn='FixPhoneNumbers') 
     if len(s) > 0:
         if not s.isdigit():
             s=''
@@ -139,18 +125,19 @@ def FixPhoneNumber(s):
         #This def gets called for four seperate phone numbers
         #I have just used one LENGTH constant to compare as they all are the same
         #length .. but if they vary in the future .. change this to accomodate.
-        if not (len(s) == 10 and (s[0:1] == '0') or s == ''): #10 digit AUS number with STD code
+        if not (len(s) == 10 and s[0:1] == '0'): #10 digit AUS number with STD code
             if not (len(s) == 10 and s[0:4]=='1300'): #10 digit 1300 number
                 if not (len(s) == 10 and s[0:4]=='1800'): #10 digit 1800 number
                     if not (len(s) == 10 and s[0:2]=='66'): #11 digit +66 numbers in internat format 
                         if not (len(s) == 11 and s[0:2]=='61'): #11 digit AUS number in internat format 
-                            if len(s) == 9:
-                                s=s.rjust(10,'0')
-                                Logit("FixNumbersD - LineNo - " + str(ln+1) + " | Mem ID - " + curline[0] + " |" + COLDESC[(i+1)] +" - " + s + ' just added a zero')  
-                            else:
-                                #str(i+1) because the counters i & ln are zero based ..
-                                #whereas 0 equates to column #1 or line #1, as the case may be
-                                Logit("FixNumbersE - LineNo - " + str(ln+1) + " | Mem ID - " + curline[0] + " |" + COLDESC[(i+1)] +" - " + s + " => unknown format")  
+                            #pass
+#                             if len(s) == 9:
+#                                 s=s.rjust(10,'0')
+#                                 Logit("FixNumbersD - LineNo - " + str(ln+1) + " | Mem ID - " + curline[0] + " |" + COLDESC[(i+1)] +" - " + s + ' just added a zero')  
+                            #else:
+                            #str(i+1) because the counters i & ln are zero based ..
+                            #whereas 0 equates to column #1 or line #1, as the case may be
+                            Logit("FixNumbersE - LineNo - " + str(ln+1) + " | Mem ID - " + curline[0] + " |" + COLDESC[(i+1)] +" - " + s + " => unknown format")  
     return s
 
 ######################## END - FUNCTION DECLARATION AREA #######################
@@ -160,7 +147,8 @@ def FixPhoneNumber(s):
 #Module import section
 import sys # Import the sys module
 import csv # Import the csv module
-import pdb # Import the python debugger
+import re
+#import pdb # Import the python debugger
 #import os
 
 #Set dubugging point
@@ -205,7 +193,8 @@ import pdb # Import the python debugger
 #CONSTANTSCONSTANTSCONSTANTSCONSTANTS
 PREID='AVA'
 COYNAME='The Australian Veterinary Assoc Ltd'
-CSVFILENAME='AVA_Orig_Alt.csv'
+#CSVFILENAME='AVA_Orig_Alt.csv'
+CSVFILENAME='input.csv'
 OUTPUTCSV=CSVFILENAME[0:CSVFILENAME.find('.')] + '_processed.csv'
 #OUTPUTCSV=CSVFILENAME[0:CSVFILENAME.find('.')] + '_TouchPaperFormat.txt'
 LOGFILE=CSVFILENAME[0:CSVFILENAME.find('.')] + '_process_LOG.txt'
@@ -221,7 +210,7 @@ AREACODE={'NSW':'02','ACT':'02','VIC':'03','TAS':'03','QLD':'07','WA':'08','SA':
 COLLEN={1:20,2:30,3:30,4:30,5:40,6:40,7:20,8:40,9:40,10:20,11:20,12:20,13:20,14:'',15:40,16:1}
 ###################################
 #List of most URL domain extensions
-URLEXT=['.com', '.co', '.net', '.org', '.biz', '.info', '.us', '.mobi', '.tv', '.ws', '.cc', '.name', '.de', '.jp', '.be', '.at', '.asia', '.co.uk', '.me.uk', '.org.uk', 'co.nz', '.net.nz', '.org.nz', '.cn', '.com.cn', '.org.cn', '.net.cn', '.tw', '.com.tw', '.org.tw', '.idv.tw', '.jobs', '.fm', '.ms', '.me', '.nu', '.tc', '.tk', '.vg', '.com.au', '.org.au', '.net.au', '.co.nz', '.au.com', '.id.au', '.net.nz', '.asn.au', '.asia', '.org.nz', '.geek.nz', '.gen.nz', '.gov.au', '.edu.au', 'csiro.au', '.edu', '.gov', '.ac.nz', '.ca', 'alice.it', 'free.fr', 'hotmail.it', '.ac.uk', 'yahoo.es', 'live.hk', '.ch']
+#URLEXT=['.com', '.co', '.net', '.org', '.biz', '.info', '.us', '.mobi', '.tv', '.ws', '.cc', '.name', '.de', '.jp', '.be', '.at', '.asia', '.co.uk', '.me.uk', '.org.uk', 'co.nz', '.net.nz', '.org.nz', '.cn', '.com.cn', '.org.cn', '.net.cn', '.tw', '.com.tw', '.org.tw', '.idv.tw', '.jobs', '.fm', '.ms', '.me', '.nu', '.tc', '.tk', '.vg', '.com.au', '.org.au', '.net.au', '.co.nz', '.au.com', '.id.au', '.net.nz', '.asn.au', '.asia', '.org.nz', '.geek.nz', '.gen.nz', '.gov.au', '.edu.au', 'csiro.au', '.edu', '.gov', '.ac.nz', '.ca', 'alice.it', 'free.fr', 'hotmail.it', '.ac.uk', 'yahoo.es', 'live.hk', '.ch']
 
 ########################### START OF CODING PROPER ###########################
 #VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
@@ -336,14 +325,13 @@ try:
             if i == 0:
                 #CUST ID Column
 #                pdb.set_trace()            
-                #Concatenate OrgID + TheirCustID + IfPrincipal
-                CheckNumeric(curline[i],b)
-                if b == 'FALSE':
-                    curcell_01 = curline[i] 
-                else:
-                    #curcell_01 = PREID + curline[0] + curline[7]
+                #Concatenate OrgID + TheirCustID
+                curcell_01 = CheckNumeric(curline[i])
+                if len(curcell_01) > 0:  
                     curcell_01 = PREID + curline[0]
-                curcell_01 = ForceFieldLength(curcell_01, COLLEN[i+1])         
+                    curcell_01 = ForceFieldLength(curcell_01, COLLEN[i+1])
+                else:
+                    Logit("CheckNumeric: LineNo - " + str(ln+1) + " | Mem ID - " + curline[0] + " |" + COLDESC[(i+1)] +" - " + curcell_01 + " :: ID CANNOT BE NULL - output from CheckNumeric")                    
             elif i == 1:
 #                pdb.set_trace()
                 curcell_02 = curline[i]             
@@ -373,8 +361,7 @@ try:
                 curcell_06 = CheckAlphaNum(curcell_06)
                 curcell_06 = ForceFieldLength(curcell_06, COLLEN[i + 1])
             elif i == 6:
-                if len(curline[i]) > 0:
-                    CheckNumeric(curline[i],b)
+                CheckNumeric(curline[i])
                 curcell_07 = curline[i]
                 curcell_07 = ForceFieldLength(curcell_07, COLLEN[i + 1]) 
             elif i == 7:
